@@ -1,0 +1,766 @@
+:root {
+  --bg: #F5F0E6;
+  --text-primary: #33302A;
+  --text-secondary: #837C6C;
+  --text-muted: #A6A08D;
+  --border: #E5DFD0;
+  --card-bg: #FCFAF5;
+  --accent: #4F7FA6;
+  --accent-bg: #E6EDF2;
+  --accent-dark: #2C4E68;
+  --online: #4E9A62;
+
+  --dur-fast: 120ms;
+  --dur-snap: 180ms;
+  --dur-base: 240ms;
+  --dur-slow: 400ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-snap: cubic-bezier(0.34, 1.1, 0.64, 1);
+
+  --font-serif: 'Alegreya', Georgia, serif;
+  --font-ui: 'Inter', -apple-system, sans-serif;
+
+  --radius-card: 14px;
+  --radius-pill: 999px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* ---------- мобильный фрейм ---------- */
+
+.phone {
+  width: 390px;
+  height: min(844px, 100dvh);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 430px) {
+  .phone {
+    width: 100%;
+    height: 100dvh;
+    border: none;
+    border-radius: 0;
+  }
+}
+
+.screen {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@keyframes route-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.route-fade {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  animation: route-fade-in var(--dur-base) var(--ease-out);
+}
+
+/* ---------- типографика ---------- */
+
+.serif-heading {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.serif-heading em {
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* ---------- общие элементы ---------- */
+
+.pill-input {
+  width: 100%;
+  padding: 14px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--card-bg);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.pill-input::placeholder {
+  color: var(--text-muted);
+}
+
+.pill-input:focus {
+  border-color: var(--text-muted);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 500;
+  font-size: 16px;
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.btn-primary:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+  cursor: default;
+}
+
+/* ---------- маскот ---------- */
+
+.bro-mascot {
+  display: block;
+  flex-shrink: 0;
+  transform-origin: 50% 100%;
+}
+
+/* спокойное покачивание — для аватарки в шапке */
+@keyframes bro-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1.5deg); }
+}
+
+.bro-mascot--idle-sway {
+  animation: bro-sway 5s ease-in-out infinite;
+}
+
+/* лёгкий живой подпрыг — для аватарок в ленте чата */
+@keyframes bro-idle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.bro-mascot--idle-bounce {
+  animation: bro-idle-bounce 2.2s ease-in-out infinite;
+}
+
+@keyframes bro-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1, 1.03); }
+}
+
+.bro-mascot-breathe {
+  display: block;
+  animation: bro-breathe 3.4s ease-in-out infinite;
+}
+
+.bro-mascot-breathe--quick {
+  animation-name: bro-breathe;
+  animation-duration: 1.9s;
+}
+
+.bro-paw {
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+@keyframes bro-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  96% { transform: scaleY(0.2); }
+}
+
+.bro-eye--blink {
+  transform-origin: center;
+  animation: bro-blink 4.5s infinite;
+}
+
+@keyframes bro-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes bro-rock {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-3deg); }
+}
+
+.bro-mascot--wave {
+  animation: bro-rock 1.5s ease-in-out infinite;
+}
+
+/* thinking — ждём начала ответа: медленный раздумчивый наклон из стороны в сторону */
+@keyframes bro-think-tilt {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-6deg); }
+  75% { transform: rotate(6deg); }
+}
+
+.bro-mascot--thinking {
+  animation: bro-think-tilt 1.3s ease-in-out infinite;
+}
+
+/* typing — идёт стрим текста: перекатывается слева направо, как колобок */
+@keyframes bro-roll {
+  0%, 100% { transform: rotate(0deg) translateX(0); }
+  25% { transform: rotate(14deg) translateX(3px); }
+  75% { transform: rotate(-14deg) translateX(-3px); }
+}
+
+.bro-mascot--typing {
+  animation: bro-roll 0.9s ease-in-out infinite;
+}
+
+.bro-mascot--happy {
+  animation: bro-bob 0.9s ease-in-out 2;
+}
+
+.bro-mascot--empty {
+  animation: bro-bob 3s ease-in-out infinite;
+}
+
+@keyframes mascot-intro {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.mascot-intro {
+  animation: mascot-intro var(--dur-slow) var(--ease-snap);
+}
+
+/* ---------- чат ---------- */
+
+.chat {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.chat-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.chat-header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.1;
+}
+
+.chat-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.chat-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.chat-feed {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@keyframes message-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  animation: message-in var(--dur-base) var(--ease-out) both;
+}
+
+.msg-row--user {
+  justify-content: flex-end;
+}
+
+.msg-avatar {
+  width: 46px;
+  flex-shrink: 0;
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 10px 15px;
+  font-size: 15px;
+}
+
+.bubble--bro {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px 14px 14px 4px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.bubble--user {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 14px 14px 4px 14px;
+}
+
+.stream-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+
+.stream-word--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bubble--typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 16px;
+}
+
+@keyframes typing-pulse {
+  0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+  30% { opacity: 1; transform: scale(1); }
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--text-secondary);
+  animation: typing-pulse 1s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 150ms; }
+.typing-dot:nth-child(3) { animation-delay: 300ms; }
+
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px 14px;
+  background: var(--bg);
+}
+
+.chat-input {
+  flex: 1;
+}
+
+.send-btn {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  color: var(--text-muted);
+  display: grid;
+  place-items: center;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.send-btn:active {
+  transform: scale(0.96);
+}
+
+.send-btn--active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---------- страницы (память, настройки) ---------- */
+
+.page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 30px 20px 24px;
+}
+
+/* экран согласия — рендерится напрямую в .phone, до роутера, поэтому сам
+   отвечает за flex-заполнение всей высоты (обычно это делает .screen-body) */
+.consent-screen {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px 24px;
+}
+
+.consent-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.consent-btn {
+  margin-top: 20px;
+  flex-shrink: 0;
+}
+
+.page-title {
+  text-align: left;
+  font-size: 30px;
+}
+
+.page-subtitle {
+  margin-top: 4px;
+  margin-bottom: 22px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ---------- память ---------- */
+
+.memory-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.memory-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 16px 30px 16px 16px;
+  min-height: 88px;
+}
+
+.memory-card--tinted {
+  background: var(--accent-bg);
+}
+
+@keyframes card-remove {
+  to { opacity: 0; transform: scale(0.9); }
+}
+
+.memory-card--removing {
+  animation: card-remove var(--dur-snap) var(--ease-out) forwards;
+  pointer-events: none;
+}
+
+@keyframes card-enter {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.memory-card--entering {
+  animation: card-enter var(--dur-base) var(--ease-out);
+}
+
+.memory-text {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.memory-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.memory-delete:hover {
+  color: var(--text-secondary);
+}
+
+.memory-delete:active {
+  transform: scale(0.96);
+}
+
+.memory-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 56px 30px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* ---------- настройки ---------- */
+
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-card--row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.settings-hint {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.pill-select {
+  width: 100%;
+  padding: 13px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23837C6C' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+}
+
+.toggle {
+  width: 50px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  padding: 3px;
+  display: flex;
+  justify-content: flex-start;
+  transition: background var(--dur-base) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.toggle:active {
+  transform: scale(0.96);
+}
+
+.toggle--on {
+  background: var(--accent-dark);
+  justify-content: flex-end;
+}
+
+.toggle-knob {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  background: var(--card-bg);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.settings-link {
+  width: 100%;
+  color: var(--text-secondary);
+  text-align: left;
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.settings-link:active {
+  transform: scale(0.96);
+}
+
+.help-link {
+  background: var(--accent-bg);
+  border-color: var(--accent-bg);
+}
+
+.help-link .settings-label {
+  color: var(--accent-dark);
+}
+
+.settings-link--danger {
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.settings-link--danger .settings-label {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.settings-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---------- нужна помощь прямо сейчас ---------- */
+
+.help-card {
+  align-items: flex-start;
+}
+
+.help-phone {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--accent-dark);
+  text-decoration: none;
+}
+
+.help-text {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.help-text + .help-text {
+  margin-top: 10px;
+}
+
+/* ---------- табы ---------- */
+
+.tabbar {
+  position: relative;
+  display: flex;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  padding: 8px 0 12px;
+}
+
+.tab-indicator {
+  position: absolute;
+  top: 4px;
+  bottom: 8px;
+  left: 0;
+  width: calc(100% / 3);
+  background: var(--accent-bg);
+  border-radius: 12px;
+  transition: transform var(--dur-base) var(--ease-out);
+  z-index: 0;
+}
+
+.tab {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--dur-base) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.tab:active {
+  transform: scale(0.96);
+}
+
+.tab--active {
+  color: var(--accent);
+  font-weight: 500;
+}
