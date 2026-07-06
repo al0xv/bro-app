@@ -220,6 +220,30 @@ app.post('/api/telegram/webhook', handleWebhook);
 
 const PORT = process.env.PORT || 8787;
 
+// Инициализация Telegram-бота (если задан токен)
+const TelegramBot = require('node-telegram-bot-api');
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const WEBAPP_URL = process.env.WEBAPP_URL;
+
+if (BOT_TOKEN && WEBAPP_URL) {
+  const bot = new TelegramBot(BOT_TOKEN, { polling: true });
+  
+  bot.onText(/\/start/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Привет! Я Бро — твой ИИ-друг. Нажми кнопку ниже, чтобы открыть чат со мной.', {
+      reply_markup: {
+        inline_keyboard: [[
+          { text: 'Открыть Бро 🤜🤛', web_app: { url: WEBAPP_URL } }
+        ]]
+      }
+    });
+  });
+  
+  console.log('Telegram bot started with webhook/polling.');
+} else {
+  console.log('TELEGRAM_BOT_TOKEN or WEBAPP_URL not provided. Telegram bot will not respond to /start.');
+}
+
 // Раздача статики фронтенда (собирается в /dist)
 app.use(express.static(path.join(__dirname, '../dist')));
 
