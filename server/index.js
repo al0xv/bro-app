@@ -5,7 +5,7 @@ const cors = require('cors');
 const { buildSystemPrompt, CALIBRATION_TOPIC_LABELS } = require('./systemPrompt');
 const { deepseekFetch } = require('./deepseek');
 const { detectCrisis, getCrisisResponse } = require('./crisisFilter');
-const { handleWebhook } = require('./telegram');
+const { startPolling } = require('./telegram');
 
 const app = express();
 app.use(cors());
@@ -214,35 +214,7 @@ app.get('/api/health', async (_req, res) => {
   res.json({ ok: true, hasKey, keyOk, chatModel: CHAT_MODEL, memoryModel: MEMORY_MODEL });
 });
 
-// POST /api/telegram/webhook — вебхук Telegram-бота: на /start отправляет
-// приветствие с кнопкой запуска Mini App (см. server/telegram.js)
-app.post('/api/telegram/webhook', handleWebhook);
-
 const PORT = process.env.PORT || 8787;
-
-// Инициализация Telegram-бота (если задан токен)
-const TelegramBot = require('node-telegram-bot-api');
-const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const WEBAPP_URL = process.env.WEBAPP_URL;
-
-if (BOT_TOKEN && WEBAPP_URL) {
-  const bot = new TelegramBot(BOT_TOKEN, { polling: true });
-  
-  bot.onText(/\/start/, (msg) => {
-    const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Привет! Я Бро — твой ИИ-друг. Нажми кнопку ниже, чтобы открыть чат со мной.', {
-      reply_markup: {
-        inline_keyboard: [[
-          { text: 'Открыть Бро 🤜🤛', web_app: { url: WEBAPP_URL } }
-        ]]
-      }
-    });
-  });
-  
-  console.log('Telegram bot started with webhook/polling.');
-} else {
-  console.log('TELEGRAM_BOT_TOKEN or WEBAPP_URL not provided. Telegram bot will not respond to /start.');
-}
 
 // Раздача статики фронтенда (собирается в /dist)
 app.use(express.static(path.join(__dirname, '../dist')));
@@ -255,3 +227,7 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`bro-server (DeepSeek) listening on http://localhost:${PORT}`);
 });
+
+// long polling телеграм-бота — независимый фоновый цикл внутри того же
+// процесса, не мешает обработке HTTP-запросов (см. server/telegram.js)
+startPolling(process.env.TELEGRAM_BOT_TOKEN, process.env.FRONTEND_ORIGIN);
