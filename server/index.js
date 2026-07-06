@@ -5,6 +5,7 @@ const cors = require('cors');
 const { buildSystemPrompt, CALIBRATION_TOPIC_LABELS } = require('./systemPrompt');
 const { deepseekFetch } = require('./deepseek');
 const { detectCrisis, getCrisisResponse } = require('./crisisFilter');
+const { handleWebhook } = require('./telegram');
 
 const app = express();
 app.use(cors());
@@ -212,6 +213,10 @@ app.get('/api/health', async (_req, res) => {
   }
   res.json({ ok: true, hasKey, keyOk, chatModel: CHAT_MODEL, memoryModel: MEMORY_MODEL });
 });
+
+// POST /api/telegram/webhook — вебхук Telegram-бота: на /start отправляет
+// приветствие с кнопкой запуска Mini App (см. server/telegram.js)
+app.post('/api/telegram/webhook', handleWebhook);
 
 const PORT = process.env.PORT || 8787;
 
