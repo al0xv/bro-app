@@ -1,11 +1,10 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import BroMascot from '../components/BroMascot';
+import { hapticImpact } from '../haptics';
 import { getMemoryFacts, setMemoryFacts, type MemoryFact } from '../storage';
 
 const INITIAL_MEMORIES: MemoryFact[] = [];
-
-const REMOVE_MS = 180; // держим в синхроне с --dur-snap
-const ENTER_MS = 240; // держим в синхроне с --dur-base
 
 function loadMemories(): MemoryFact[] {
   const stored = getMemoryFacts();
@@ -16,11 +15,17 @@ function loadMemories(): MemoryFact[] {
 
 export default function Memory() {
   const [memories, setMemoriesState] = useState<MemoryFact[]>(loadMemories);
-  const [removingIds, setRemovingIds] = useState<Set<number>>(new Set());
-  const [enteringIds, setEnteringIds] = useState<Set<number>>(new Set());
-  const cardRefs = useRef(new Map<number, HTMLDivElement>());
-  const prevRects = useRef(new Map<number, DOMRect>());
-  const knownIds = useRef(new Set(memories.map((m) => m.id)));
+  const [editingId, setEditingId] = useState<number | null>(null);
+
+  const subtitle = `можно удалить всё, что хочешь`;
+
+  const commitEdit = (id: number, newText: string) => {
+    if (newText.trim()) {
+      hapticImpact('light');
+      setMemories((prev) => prev.map((m) => (m.id === id ? { ...m, text: newText.trim() } : m)));
+    }
+    setEditingId(null);
+  };
 
   const setMemories = (updater: (prev: MemoryFact[]) => MemoryFact[]) => {
     setMemoriesState((prev) => {
@@ -31,70 +36,16 @@ export default function Memory() {
   };
 
   const remove = (id: number) => {
-    prevRects.current = new Map();
-    cardRefs.current.forEach((el, key) => {
-      if (key !== id) prevRects.current.set(key, el.getBoundingClientRect());
-    });
-
-    setRemovingIds((prev) => new Set(prev).add(id));
-
-    window.setTimeout(() => {
-      setMemories((prev) => prev.filter((m) => m.id !== id));
-      setRemovingIds((prev) => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
-    }, REMOVE_MS);
+    hapticImpact('medium');
+    setMemories((prev) => prev.filter((m) => m.id !== id));
   };
-
-  // FLIP: соседние карточки плавно занимают освободившееся место
-  useLayoutEffect(() => {
-    cardRefs.current.forEach((el, id) => {
-      const prev = prevRects.current.get(id);
-      if (!prev) return;
-      const next = el.getBoundingClientRect();
-      const dx = prev.left - next.left;
-      const dy = prev.top - next.top;
-      if (!dx && !dy) return;
-
-      el.style.transition = 'none';
-      el.style.transform = `translate(${dx}px, ${dy}px)`;
-      requestAnimationFrame(() => {
-        el.style.transition = `transform var(--dur-base) var(--ease-out)`;
-        el.style.transform = '';
-      });
-    });
-    prevRects.current = new Map();
-  }, [memories]);
-
-  // новые карточки (например, когда бро что-то запомнил) появляются с scale+fade,
-  // а не выскакивают мгновенно
-  useLayoutEffect(() => {
-    const newIds = memories.map((m) => m.id).filter((id) => !knownIds.current.has(id));
-    if (newIds.length) {
-      setEnteringIds((prev) => {
-        const next = new Set(prev);
-        newIds.forEach((id) => next.add(id));
-        return next;
-      });
-      window.setTimeout(() => {
-        setEnteringIds((prev) => {
-          const next = new Set(prev);
-          newIds.forEach((id) => next.delete(id));
-          return next;
-        });
-      }, ENTER_MS);
-    }
-    knownIds.current = new Set(memories.map((m) => m.id));
-  }, [memories]);
 
   return (
     <div className="page">
       <h1 className="serif-heading page-title">
         <em>помню</em>
       </h1>
-      <p className="page-subtitle">можно удалить всё, что хочешь</p>
+      <p className="page-subtitle">{subtitle}</p>
 
       {memories.length === 0 ? (
         <div className="memory-empty">
@@ -103,31 +54,44 @@ export default function Memory() {
         </div>
       ) : (
         <div className="memory-grid">
-          {memories.map((mem, i) => (
-            <div
-              key={mem.id}
-              ref={(el) => {
-                if (el) cardRefs.current.set(mem.id, el);
-                else cardRefs.current.delete(mem.id);
-              }}
-              className={
-                (i % 2 === 1 ? 'memory-card memory-card--tinted' : 'memory-card') +
-                (removingIds.has(mem.id) ? ' memory-card--removing' : '') +
-                (enteringIds.has(mem.id) ? ' memory-card--entering' : '')
-              }
-            >
-              <span className="memory-text">{mem.text}</span>
-              <button
-                className="memory-delete"
-                onClick={() => remove(mem.id)}
-                aria-label="удалить"
+          <AnimatePresence mode="popLayout">
+            {memories.map((mem, i) => (
+              <motion.div
+                layout
+                key={mem.id}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                className={`memory-card ${i % 2 === 1 ? 'memory-card--tinted' : ''}`}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-                  <path d="M6 6l12 12M18 6L6 18" />
-                </svg>
-              </button>
-            </div>
-          ))}
+                {editingId === mem.id ? (
+                  <input
+                    autoFocus
+                    defaultValue={mem.text}
+                    style={{ flex: 1, background: 'transparent', border: 'none', color: 'inherit', font: 'inherit', outline: 'none', minWidth: 0 }}
+                    onBlur={(e) => commitEdit(mem.id, e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') commitEdit(mem.id, (e.target as HTMLInputElement).value);
+                      if (e.key === 'Escape') setEditingId(null);
+                    }}
+                  />
+                ) : (
+                  <span className="memory-text" onClick={() => setEditingId(mem.id)}>{mem.text}</span>
+                )}
+                <motion.button
+                  whileTap={{ scale: 0.8 }}
+                  className="memory-delete"
+                  onClick={() => remove(mem.id)}
+                  aria-label="удалить"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M6 6l12 12M18 6L6 18" />
+                  </svg>
+                </motion.button>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
     </div>

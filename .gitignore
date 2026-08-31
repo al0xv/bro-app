@@ -4,3 +4,6 @@ dist/
 .env.local
 .env.*.local
 .DS_Store
+
+# local agent skill libraries (nested git repos) — not part of the app
+.agents/

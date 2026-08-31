@@ -1,15 +1,98 @@
 :root {
+  /* Default fallbacks if no theme class is applied */
   --bg: #F5F0E6;
-  --text-primary: #33302A;
-  --text-secondary: #837C6C;
-  --text-muted: #A6A08D;
-  --border: #E5DFD0;
-  --card-bg: #FCFAF5;
-  --accent: #4F7FA6;
-  --accent-bg: #E6EDF2;
-  --accent-dark: #2C4E68;
-  --online: #4E9A62;
+  --text-primary: #2D2A26;
+  --text-secondary: #686359;
+  --text-muted: #706A61;
+  --border: #E8E2D6;
+  --card-bg: #FCFBF8;
+  --accent: #436F94;
+  --accent-bg: #E3EAF0;
+  --accent-light: #6A8CA7;
+  --accent-text: var(--accent);
+  --accent-btn: var(--accent);
+  --accent-deep: #1A374D;
+  --accent-dark: #27455E;
 
+  --user-bubble-bg: var(--text-primary);
+  --user-bubble-text: var(--bg);
+  --mascot-eye: #241F1A;
+  --mascot-spark: #B9D6E6;
+  --on-accent-text: #fff;
+  --help-link-text: #27455E;
+
+  --shadow-card: 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-ambient: 0 12px 40px rgba(0,0,0,0.05);
+  --card-border: 1px solid var(--border);
+}
+
+.theme-light {
+  /* синхронизирует нативный chrome браузера (скроллбары, автозаполнение,
+     форм-контролы) с ЯВНО выбранной темой приложения, а не с сырой
+     OS-настройкой — они могут не совпадать, если тема выбрана вручную */
+  color-scheme: light;
+  --bg: #F5F0E6;
+  --text-primary: #2D2A26;
+  --text-secondary: #686359;
+  --text-muted: #706A61;
+  --border: #E8E2D6;
+  --card-bg: #FCFBF8;
+  --accent: #436F94;
+  --accent-bg: #E3EAF0;
+  --accent-light: #6A8CA7;
+  --accent-text: var(--accent);
+  --accent-btn: var(--accent);
+  --accent-deep: #1A374D;
+  --accent-dark: #27455E;
+  
+  --user-bubble-bg: var(--text-primary);
+  --user-bubble-text: var(--bg);
+  --mascot-eye: #241F1A;
+  --mascot-spark: #B9D6E6;
+  --on-accent-text: #fff;
+  --help-link-text: #27455E;
+
+  --shadow-card: 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-ambient: 0 12px 40px rgba(0,0,0,0.05);
+  --card-border: 1px solid var(--border);
+}
+
+.theme-dark {
+  /* Claude Code Dark Theme */
+  color-scheme: dark;
+  --bg: #18181A;
+  --text-primary: #EDEDED;
+  --text-secondary: #A1A1AA;
+  --text-muted: #8B8B92;
+  --border: #333336;
+  --card-bg: #222224;
+  --accent: #4A81AD;
+  --accent-bg: #1A2633;
+  --accent-light: #6A8CA7;
+  --accent-deep: #0B131A;
+  --accent-dark: #27455E;
+  /* --accent сам по себе не проходит AA ни как текст на --bg (4.25:1), ни как
+     фон под белым текстом (4.17:1) — а поднять оба сразу одним значением
+     нельзя, требования противоположные. accent-light уже светлее и как текст
+     даёт 5.0:1; accent-btn — чуть темнее специально под белый текст кнопок */
+  --accent-text: var(--accent-light);
+  --accent-btn: #4679A3;
+  
+  --user-bubble-bg: #EDEDED;
+  --user-bubble-text: #18181A;
+  --mascot-eye: #241F1A;
+  --mascot-spark: #B9D6E6;
+  --on-accent-text: #fff;
+  /* accent-dark на accent-bg почти нечитаемо в тёмной теме — оба тёмно-синие.
+     здесь нужен светлый текст на тёмном фоне, а не наоборот */
+  --help-link-text: #8FB8D9;
+
+  --shadow-card: 0 8px 24px rgba(0,0,0,0.3);
+  --shadow-ambient: 0 12px 40px rgba(0,0,0,0.4);
+  --card-border: 1px solid rgba(255,255,255,0.06);
+}
+
+:root {
   --dur-fast: 120ms;
   --dur-snap: 180ms;
   --dur-base: 240ms;
@@ -17,10 +100,10 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-snap: cubic-bezier(0.34, 1.1, 0.64, 1);
 
-  --font-serif: 'Alegreya', Georgia, serif;
-  --font-ui: 'Inter', -apple-system, sans-serif;
+  --font-serif: 'Newsreader', 'Alegreya', Georgia, serif;
+  --font-ui: 'Geist Sans', -apple-system, sans-serif;
 
-  --radius-card: 14px;
+  --radius-card: 20px;
   --radius-pill: 999px;
 }
 
@@ -28,6 +111,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* свои whileTap/active-анимации уже дают отклик на нажатие — не нужен
+     ещё и стандартный серый флэш браузера поверх них */
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -40,14 +126,57 @@ body {
   color: var(--text-primary);
   font-family: var(--font-ui);
   font-size: 15px;
-  line-height: 1.45;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+::selection {
+  background: var(--accent-bg);
+  color: var(--text-primary);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 #root {
   height: 100%;
   display: grid;
   place-items: center;
+}
+
+/* ---------- сплэш-скрин ---------- */
+.splash-gooey {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  overflow: hidden;
+  background: transparent;
+}
+
+.splash-reduced {
+  background: var(--accent);
+  transition: opacity var(--dur-base);
+}
+
+.splash-noise {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+  /* Extremely lightweight 1-octave SVG noise for film grain */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 button {
@@ -59,6 +188,17 @@ button {
   cursor: pointer;
 }
 
+/* единое кольцо фокуса для клавиатурной навигации — раньше нигде не было
+   видимого фокуса, кроме одного текстового инпута */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* ---------- мобильный фрейм ---------- */
 
 .phone {
@@ -66,7 +206,8 @@ button {
   height: min(844px, 100dvh);
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-ambient);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -117,6 +258,7 @@ button {
   font-size: 26px;
   line-height: 1.25;
   text-align: center;
+  text-wrap: balance;
 }
 
 .serif-heading em {
@@ -129,13 +271,17 @@ button {
 .pill-input {
   width: 100%;
   padding: 14px 20px;
-  border: 1px solid var(--border);
+  border: var(--card-border);
   border-radius: var(--radius-pill);
   background: var(--card-bg);
+  box-shadow: var(--shadow-card);
   font-family: var(--font-ui);
-  font-size: 15px;
+  font-size: 16px;
   color: var(--text-primary);
   outline: none;
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  caret-color: var(--text-primary);
 }
 
 .pill-input::placeholder {
@@ -150,8 +296,8 @@ button {
   width: 100%;
   padding: 15px 20px;
   border-radius: var(--radius-pill);
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-btn);
+  color: var(--on-accent-text);
   font-weight: 500;
   font-size: 16px;
   transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out),
@@ -179,7 +325,7 @@ button {
 /* спокойное покачивание — для аватарки в шапке */
 @keyframes bro-sway {
   0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(1.5deg); }
+  50% { transform: rotate(3deg); }
 }
 
 .bro-mascot--idle-sway {
@@ -215,6 +361,17 @@ button {
   transition: transform var(--dur-slow) var(--ease-out);
 }
 
+@keyframes broThinkingEyes {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(6px, -4px); } /* lookup right */
+  50% { transform: translate(8px, -4px); } /* slight shift */
+  75% { transform: translate(6px, -4px); } /* slight shift */
+}
+
+.bro-mascot--thinking .bro-eyes {
+  animation: broThinkingEyes 2s ease-in-out infinite;
+}
+
 @keyframes bro-blink {
   0%, 92%, 100% { transform: scaleY(1); }
   96% { transform: scaleY(0.2); }
@@ -223,6 +380,18 @@ button {
 .bro-eye--blink {
   transform-origin: center;
   animation: bro-blink 4.5s infinite;
+}
+
+@keyframes bro-look {
+  0%, 15% { transform: translateX(0); }
+  20%, 35% { transform: translateX(-3px); }
+  40%, 65% { transform: translateX(0); }
+  70%, 85% { transform: translateX(3px); }
+  90%, 100% { transform: translateX(0); }
+}
+
+.bro-eyes {
+  animation: bro-look 7s ease-in-out infinite;
 }
 
 @keyframes bro-bob {
@@ -240,25 +409,23 @@ button {
 }
 
 /* thinking — ждём начала ответа: медленный раздумчивый наклон из стороны в сторону */
-@keyframes bro-think-tilt {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-6deg); }
-  75% { transform: rotate(6deg); }
+@keyframes bro-float-thinking {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(-3deg); }
 }
 
 .bro-mascot--thinking {
-  animation: bro-think-tilt 1.3s ease-in-out infinite;
+  animation: bro-float-thinking 3s ease-in-out infinite;
 }
 
-/* typing — идёт стрим текста: перекатывается слева направо, как колобок */
-@keyframes bro-roll {
-  0%, 100% { transform: rotate(0deg) translateX(0); }
-  25% { transform: rotate(14deg) translateX(3px); }
-  75% { transform: rotate(-14deg) translateX(-3px); }
+/* typing — идёт стрим текста: плавный парящий эффект */
+@keyframes bro-float-typing {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
 }
 
 .bro-mascot--typing {
-  animation: bro-roll 0.9s ease-in-out infinite;
+  animation: bro-float-typing 3s ease-in-out infinite;
 }
 
 .bro-mascot--happy {
@@ -269,6 +436,30 @@ button {
   animation: bro-bob 3s ease-in-out infinite;
 }
 
+/* listening — мягкий внимательный наклон, пока человек печатает черновик */
+@keyframes bro-listen-tilt {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(2deg); }
+}
+
+.bro-mascot--listening {
+  animation: bro-listen-tilt 2.4s ease-in-out infinite;
+}
+
+/* искра happy-позы — не просто появляется, а вылетает с небольшим нахлёстом
+   и оседает, staggered-delay задаётся инлайново в BroMascot.tsx */
+@keyframes sparkle-burst {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  55% { transform: scale(1.4) rotate(20deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+}
+
+.bro-sparkle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sparkle-burst var(--dur-slow) var(--ease-snap) both;
+}
+
 @keyframes mascot-intro {
   from { opacity: 0; transform: scale(0.7); }
   to { opacity: 1; transform: scale(1); }
@@ -276,6 +467,17 @@ button {
 
 .mascot-intro {
   animation: mascot-intro var(--dur-slow) var(--ease-snap);
+}
+
+/* маскот дышит/покачивается/моргает бесконечно — чисто декоративная "живость",
+   не несёт функциональной информации (сама поза уже её передаёт статично),
+   поэтому безопасно и правильно полностью отключить под reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .bro-mascot,
+  .bro-mascot * {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 /* ---------- чат ---------- */
@@ -325,7 +527,7 @@ button {
   align-items: center;
   gap: 5px;
   font-size: 12px;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .chat-status-dot {
@@ -343,6 +545,37 @@ button {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
+}
+
+.chat-date-divider {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 6px;
+}
+
+.chat-date-divider span {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--accent-bg);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.scroll-to-bottom-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--card-bg);
+  border: var(--card-border);
+  box-shadow: var(--shadow-card);
+  display: grid;
+  place-items: center;
+  color: var(--text-secondary);
+  z-index: 5;
 }
 
 @keyframes message-in {
@@ -354,7 +587,6 @@ button {
   display: flex;
   align-items: flex-end;
   gap: 8px;
-  animation: message-in var(--dur-base) var(--ease-out) both;
 }
 
 .msg-row--user {
@@ -367,26 +599,28 @@ button {
 }
 
 .bubble {
-  max-width: 75%;
-  padding: 10px 15px;
+  max-width: 80%;
+  padding: 12px 18px;
   font-size: 15px;
+  line-height: 1.5;
 }
 
 .bubble--bro {
   background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 14px 14px 14px 4px;
+  border-radius: 16px 16px 16px 6px;
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 17px;
   color: var(--text-primary);
+  box-shadow: var(--shadow-card);
+  border: var(--card-border);
 }
 
 .bubble--user {
-  background: var(--accent);
-  color: #fff;
-  border-radius: 14px 14px 4px 14px;
+  background: var(--user-bubble-bg);
+  color: var(--user-bubble-text);
+  border-radius: 18px 18px 4px 18px;
 }
 
 .stream-word {
@@ -404,29 +638,51 @@ button {
 .bubble--typing {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 14px 16px;
+  padding: 14px 18px;
 }
 
-@keyframes typing-pulse {
-  0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
-  30% { opacity: 1; transform: scale(1); }
+/* тот же гуи-фильтр, что у сплэша (index.html, #goo) — точки на маленьком
+   зазоре подпухают и на пике почти сливаются друг с другом, вместо того
+   чтобы просто мигать прозрачностью по отдельности */
+.typing-dots-goo {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  filter: url(#goo);
+}
+
+@keyframes typing-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.2); }
 }
 
 .typing-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-pill);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
   background: var(--text-secondary);
-  animation: typing-pulse 1s ease-in-out infinite;
+  animation: typing-bounce 0.9s ease-in-out infinite;
 }
 
-.typing-dot:nth-child(2) { animation-delay: 150ms; }
-.typing-dot:nth-child(3) { animation-delay: 300ms; }
+.typing-dot:nth-child(2) { animation-delay: 120ms; }
+.typing-dot:nth-child(3) { animation-delay: 240ms; }
+
+@keyframes chat-toast-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-toast {
+  padding: 0 16px 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+  animation: chat-toast-in var(--dur-base) var(--ease-out);
+}
 
 .chat-input-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px;
   padding: 10px 14px 14px;
   background: var(--bg);
@@ -434,6 +690,19 @@ button {
 
 .chat-input {
   flex: 1;
+  resize: none;
+  min-height: 46px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 11px 20px; /* 11px * 2 + 22px line-height + 2px border = 46px exact height */
+  line-height: 22px;
+  border-radius: 23px; /* Prevents 999px pill from turning into an oval/bubble on iOS */
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  caret-color: var(--text-primary);
+}
+.chat-input::-webkit-scrollbar {
+  display: none;
 }
 
 .send-btn {
@@ -454,8 +723,8 @@ button {
 }
 
 .send-btn--active {
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-btn);
+  color: var(--on-accent-text);
 }
 
 /* ---------- страницы (память, настройки) ---------- */
@@ -483,6 +752,35 @@ button {
   overflow-y: auto;
 }
 
+/* тонкий брендированный скроллбар вместо системного, и запрет "перетекания"
+   скролла на body позади рамки телефона — рамка ведёт себя как отдельный экран */
+.chat-feed-scroller,
+.page,
+.consent-body {
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.chat-feed-scroller::-webkit-scrollbar,
+.page::-webkit-scrollbar,
+.consent-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-feed-scroller::-webkit-scrollbar-track,
+.page::-webkit-scrollbar-track,
+.consent-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-feed-scroller::-webkit-scrollbar-thumb,
+.page::-webkit-scrollbar-thumb,
+.consent-body::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-pill);
+}
+
 .consent-btn {
   margin-top: 20px;
   flex-shrink: 0;
@@ -491,6 +789,7 @@ button {
 .page-title {
   text-align: left;
   font-size: 30px;
+  text-wrap: balance;
 }
 
 .page-subtitle {
@@ -498,27 +797,34 @@ button {
   margin-bottom: 22px;
   font-size: 14px;
   color: var(--text-secondary);
+  text-wrap: pretty;
 }
 
 /* ---------- память ---------- */
 
 .memory-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
 .memory-card {
   position: relative;
   background: var(--card-bg);
-  border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  padding: 16px 30px 16px 16px;
-  min-height: 88px;
+  padding: 18px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-card);
+  border: var(--card-border);
+  overflow: hidden;
 }
 
 .memory-card--tinted {
   background: var(--accent-bg);
+  border-color: transparent;
 }
 
 @keyframes card-remove {
@@ -546,10 +852,10 @@ button {
 
 .memory-delete {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
+  top: 6px;
+  right: 6px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-pill);
   display: grid;
   place-items: center;
@@ -586,12 +892,45 @@ button {
 
 .settings-card {
   background: var(--card-bg);
-  border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  padding: 16px;
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+  border: var(--card-border);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: center;
+}
+
+.segmented-control {
+  display: flex;
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+  border: var(--card-border);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.theme-dark .segmented-control {
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.segment {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 8px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  transition: all var(--dur-fast);
+}
+
+.segment.active {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-card);
 }
 
 .settings-card--row {
@@ -607,17 +946,19 @@ button {
 }
 
 .settings-hint {
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--text-muted);
   margin-top: 2px;
+  text-wrap: pretty;
 }
 
 .pill-select {
   width: 100%;
   padding: 13px 20px;
-  border: 1px solid var(--border);
+  border: var(--card-border);
   border-radius: var(--radius-pill);
-  background: var(--bg);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-card);
   font-family: var(--font-ui);
   font-size: 15px;
   color: var(--text-primary);
@@ -629,12 +970,12 @@ button {
 }
 
 .toggle {
-  width: 50px;
-  height: 30px;
+  width: 54px;
+  height: 34px;
   flex-shrink: 0;
   border-radius: var(--radius-pill);
   background: var(--border);
-  padding: 3px;
+  padding: 4px;
   display: flex;
   justify-content: flex-start;
   transition: background var(--dur-base) var(--ease-out), transform var(--dur-fast) var(--ease-out);
@@ -650,8 +991,8 @@ button {
 }
 
 .toggle-knob {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: var(--radius-pill);
   background: var(--card-bg);
   transition: transform var(--dur-base) var(--ease-out);
@@ -675,7 +1016,7 @@ button {
 }
 
 .help-link .settings-label {
-  color: var(--accent-dark);
+  color: var(--help-link-text);
 }
 
 .settings-link--danger {
@@ -695,6 +1036,34 @@ button {
   color: var(--text-muted);
 }
 
+.settings-hint--error {
+  color: var(--text-secondary);
+}
+
+.settings-hint--founder {
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+.settings-buy-btn {
+  margin-top: 12px;
+  width: 100%;
+  background: var(--accent-btn);
+  color: var(--on-accent-text);
+  border: none;
+  padding: 12px 20px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.settings-buy-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ---------- нужна помощь прямо сейчас ---------- */
 
 .help-card {
@@ -707,12 +1076,15 @@ button {
   font-weight: 600;
   color: var(--accent-dark);
   text-decoration: none;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .help-text {
   font-size: 14px;
   color: var(--text-primary);
   line-height: 1.6;
+  text-wrap: pretty;
 }
 
 .help-text + .help-text {
@@ -737,7 +1109,6 @@ button {
   width: calc(100% / 3);
   background: var(--accent-bg);
   border-radius: 12px;
-  transition: transform var(--dur-base) var(--ease-out);
   z-index: 0;
 }
 
@@ -761,6 +1132,140 @@ button {
 }
 
 .tab--active {
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 500;
+}
+
+/* -------------------------------------
+ * PAYWALL
+ * ------------------------------------- */
+.paywall-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.paywall-card {
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--radius-card);
+  padding: 32px 24px;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+
+.paywall-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  display: grid;
+  place-items: center;
+  transition: color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.paywall-close-btn:hover {
+  color: var(--text-secondary);
+}
+
+.paywall-close-btn:active {
+  transform: scale(0.9);
+}
+
+.paywall-mascot {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.paywall-card h2 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 24px;
+  color: var(--text-primary);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.paywall-card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.paywall-features {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 8px;
+  text-align: left;
+  width: 100%;
+}
+
+.paywall-features li {
+  font-size: 14px;
+  color: var(--text-primary);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+.paywall-features li:last-child {
+  border-bottom: none;
+}
+
+.paywall-founder-note {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin: 4px 0 8px;
+  text-wrap: pretty;
+}
+
+.paywall-btn {
+  background: var(--accent-btn);
+  color: var(--on-accent-text);
+  border: none;
+  padding: 15px 24px;
+  border-radius: var(--radius-pill);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+
+.paywall-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.paywall-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paywall-error {
+  color: var(--text-secondary);
+  font-size: 13px;
 }

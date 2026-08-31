@@ -1,5 +1,6 @@
-// thinking — ждём начала ответа (точки), typing — идёт стрим текста
-export type BroPose = 'default' | 'wave' | 'thinking' | 'typing' | 'happy' | 'empty';
+// thinking — ждём начала ответа (точки), typing — идёт стрим текста,
+// listening — человек печатает черновик, ответа ещё не было
+export type BroPose = 'default' | 'wave' | 'thinking' | 'typing' | 'happy' | 'empty' | 'listening';
 
 // разные фоновые анимации "живости" — независимо от позы, поверх неё.
 // sway — спокойное покачивание (для аватарки в шапке),
@@ -12,8 +13,10 @@ interface BroMascotProps {
   idle?: BroIdle;
 }
 
-const EYE = '#241F1A';
-const SPARK = '#B9D6E6';
+// цвета глаз/искры вынесены в CSS-токены (--mascot-eye/--mascot-spark), чтобы
+// маскот тоже реагировал на смену темы, а не оставался хардкодным в тёмном режиме
+const EYE = 'var(--mascot-eye)';
+const SPARK = 'var(--mascot-spark)';
 
 interface PoseConfig {
   leftRot: number;
@@ -36,6 +39,8 @@ function getPoseConfig(pose: BroPose): PoseConfig {
       return { leftRot: 30, rightRot: -30, closedEyes: false, blink: false, sparkle: true, wrapperClass: 'bro-mascot--happy' };
     case 'empty':
       return { leftRot: -15, rightRot: 15, closedEyes: true, blink: false, sparkle: false, wrapperClass: 'bro-mascot--empty' };
+    case 'listening':
+      return { leftRot: 8, rightRot: -8, closedEyes: false, blink: true, sparkle: false, wrapperClass: 'bro-mascot--listening' };
     default:
       return { leftRot: 0, rightRot: 0, closedEyes: false, blink: true, sparkle: false, wrapperClass: '' };
   }
@@ -92,8 +97,10 @@ export default function BroMascot({ pose = 'default', size = 120, idle = 'sway' 
           <rect x={45} y={50} width={110} height={70} fill="var(--accent)" />
 
           {/* глаза */}
-          <rect x={71} y={eyeY} width={22} height={eyeH} fill={EYE} className={eyeClass} />
-          <rect x={107} y={eyeY} width={22} height={eyeH} fill={EYE} className={eyeClass} />
+          <g className="bro-eyes">
+            <rect x={71} y={eyeY} width={22} height={eyeH} fill={EYE} className={eyeClass} />
+            <rect x={107} y={eyeY} width={22} height={eyeH} fill={EYE} className={eyeClass} />
+          </g>
 
           {/* ноги — на 3px выше, заходят ПОД корпус */}
           <rect x={45} y={117} width={14} height={33} fill="var(--accent)" />
@@ -101,14 +108,14 @@ export default function BroMascot({ pose = 'default', size = 120, idle = 'sway' 
           <rect x={109} y={117} width={14} height={33} fill="var(--accent)" />
           <rect x={141} y={117} width={14} height={33} fill="var(--accent)" />
 
-          {/* искра */}
+          {/* искра — staggered burst-and-settle при входе, а не просто "появилась" */}
           {cfg.sparkle && (
             <>
-              <rect x={160} y={4} width={8} height={8} fill={SPARK} />
-              <rect x={148} y={16} width={8} height={8} fill={SPARK} />
-              <rect x={160} y={16} width={8} height={8} fill={SPARK} />
-              <rect x={172} y={16} width={8} height={8} fill={SPARK} />
-              <rect x={160} y={28} width={8} height={8} fill={SPARK} />
+              <rect className="bro-sparkle" x={160} y={4} width={8} height={8} fill={SPARK} style={{ animationDelay: '0ms' }} />
+              <rect className="bro-sparkle" x={148} y={16} width={8} height={8} fill={SPARK} style={{ animationDelay: '40ms' }} />
+              <rect className="bro-sparkle" x={160} y={16} width={8} height={8} fill={SPARK} style={{ animationDelay: '90ms' }} />
+              <rect className="bro-sparkle" x={172} y={16} width={8} height={8} fill={SPARK} style={{ animationDelay: '60ms' }} />
+              <rect className="bro-sparkle" x={160} y={28} width={8} height={8} fill={SPARK} style={{ animationDelay: '130ms' }} />
             </>
           )}
         </svg>

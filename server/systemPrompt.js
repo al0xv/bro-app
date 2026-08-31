@@ -40,7 +40,10 @@ const MEMORY_RECALL_SUPPLEMENT = `Если с прошлого раза что-�
 // (см. reconnecting в /api/chat) — не меняет персону, только даёт повод написать первым
 const RECONNECT_SUPPLEMENT = `Ты сам решил написать первым, потому что давно не общались. Обопрись на факты из памяти — необязательно на последний, можно вспомнить что-то из более раннего, как это делает друг, который правда думал о тебе. Не извиняйся что долго не писал, не будь драматичным, просто начни разговор естественно, как будто просто вспомнил про человека.`;
 
-function buildSystemPrompt(memory, calibrating, reconnecting) {
+// применяется ровно один раз, на первом сообщении после успешного завершения калибровки
+const CALIBRATION_FINISH_SUPPLEMENT = `Это твоё первое сообщение после того, как вы с человеком более-менее узнали друг друга (обсудили базовые вещи вроде имени, дел, интересов). Естественно, без пафоса и не ломая тон, дай понять, что теперь "все свои", и вы просто общаетесь дальше.`;
+
+function buildSystemPrompt(memory, calibrating, reconnecting, calibrationJustFinished = false) {
   let prompt = BASE_SYSTEM_PROMPT;
 
   const facts = Array.isArray(memory)
@@ -59,6 +62,10 @@ function buildSystemPrompt(memory, calibrating, reconnecting) {
     prompt += `\n\n${MEMORY_RECALL_SUPPLEMENT}`;
   }
 
+  if (calibrationJustFinished) {
+    prompt += `\n\n${CALIBRATION_FINISH_SUPPLEMENT}`;
+  }
+
   if (reconnecting) {
     prompt += `\n\n${RECONNECT_SUPPLEMENT}`;
   }
@@ -71,6 +78,7 @@ module.exports = {
   CALIBRATION_SUPPLEMENT,
   MEMORY_RECALL_SUPPLEMENT,
   RECONNECT_SUPPLEMENT,
+  CALIBRATION_FINISH_SUPPLEMENT,
   CALIBRATION_TOPIC_ORDER,
   CALIBRATION_TOPIC_LABELS,
   buildSystemPrompt,

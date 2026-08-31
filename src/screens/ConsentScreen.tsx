@@ -1,3 +1,4 @@
+import { hapticNotification } from '../haptics';
 import { setConsentGiven } from '../storage';
 
 interface ConsentScreenProps {
@@ -7,6 +8,7 @@ interface ConsentScreenProps {
 export default function ConsentScreen({ onAccept }: ConsentScreenProps) {
   const handleAccept = () => {
     setConsentGiven();
+    hapticNotification('success');
     onAccept();
   };
 
